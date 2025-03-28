@@ -11,5 +11,8 @@ export class TasksController {
     @Query("status") status?: TaskStatus,
     @Query("page") page?: number,
     @Query("limit") limit?: number,
-  ) {}
+    @Query("sortBy") sortBy?: string,
+  ) {
+    return this.tasksService.getFilteredTasks(status, page, limit, sortBy);
+  }
 }
