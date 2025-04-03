@@ -13,25 +13,33 @@ export class NotificationsService {
 
   sendEmail(to: string, subject: string, message: string): void {
     if (!to || !subject || !message) {
-      throw new BadRequestException();
+      throw new BadRequestException(
+        "Отсутствуют данные для отправки Email-уведомления",
+      );
     }
 
     const sentEmailLog = `Email sent to ${to}: [${subject}] ${message}`;
 
-    appendFile("file-log.txt", sentEmailLog + `\n`, () => {});
+    this.sentLogToFile(sentEmailLog);
 
     return console.log(sentEmailLog);
   }
 
   sendSMS(to: string, message: string): void {
     if (!to || !message) {
-      throw new BadRequestException();
+      throw new BadRequestException(
+        "Отсутствуют данные для отправки SMS-уведомления",
+      );
     }
 
     const sentSMSLog = `SMS sent to ${to}: ${message}`;
 
-    appendFile("file-log.txt", sentSMSLog + `\n`, () => {});
+    this.sentLogToFile(sentSMSLog);
 
     return console.log(sentSMSLog);
+  }
+
+  sentLogToFile(log: string) {
+    return appendFile("file-log.txt", log + `\n`, () => {});
   }
 }

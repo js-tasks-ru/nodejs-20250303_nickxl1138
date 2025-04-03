@@ -26,11 +26,15 @@ export class TasksService {
     };
     this.tasks.push(task);
 
-    const userEmail = this.usersService.getUserById(assignedTo).email;
+    const user = this.usersService.getUserById(assignedTo);
+    if (!user) {
+      throw new NotFoundException(`Пользователь с ID ${assignedTo} не найден`);
+    }
+
     const subject = "Новая задача";
     const message = `Вы назначены ответственным за задачу: "${title}"`;
 
-    this.notificationsService.sendEmail(userEmail, subject, message);
+    this.notificationsService.sendEmail(user.email, subject, message);
 
     return task;
   }
@@ -44,10 +48,14 @@ export class TasksService {
     Object.assign(task, updateTaskDto);
 
     const { title, status, assignedTo } = task;
-    const userPhone = this.usersService.getUserById(assignedTo).phone;
+    const user = this.usersService.getUserById(assignedTo);
+    if (!user) {
+      throw new NotFoundException(`Пользователь с ID ${assignedTo} не найден`);
+    }
+
     const message = `Статус задачи "${title}" обновлён на "${status}"`;
 
-    this.notificationsService.sendSMS(userPhone, message);
+    this.notificationsService.sendSMS(user.phone, message);
 
     return task;
   }
