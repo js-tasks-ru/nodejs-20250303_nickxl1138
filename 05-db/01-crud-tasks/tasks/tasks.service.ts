@@ -26,7 +26,6 @@ export class TasksService {
   }
 
   async findAll(page?: number, limit?: number) {
-    let allTasks = await this.taskRepository.find();
     const isPageAndLimitValid = page > 0 && limit > 0;
     const isPageAndLimitNotEmpty = page && limit;
 
@@ -35,10 +34,13 @@ export class TasksService {
     }
 
     if (isPageAndLimitNotEmpty) {
-      allTasks = allTasks.slice((page - 1) * limit, page * limit);
+      return await this.taskRepository.find({
+        skip: (page - 1) * limit,
+        take: limit,
+      });
     }
 
-    return allTasks;
+    return await this.taskRepository.find();
   }
 
   async findOne(id: number) {
@@ -54,10 +56,6 @@ export class TasksService {
   async update(id: number, updateTaskDto: UpdateTaskDto) {
     const taskToUpdate = await this.findOne(id);
 
-    if (!taskToUpdate) {
-      throw new NotFoundException(`Задача с таким id - "${id}" не найдена`);
-    }
-
     Object.assign(taskToUpdate, { ...updateTaskDto });
 
     await this.taskRepository.save(taskToUpdate);
@@ -67,10 +65,6 @@ export class TasksService {
 
   async remove(id: number): Promise<{ message: string }> {
     const taskToRemove = await this.findOne(id);
-
-    if (!taskToRemove) {
-      throw new NotFoundException(`Задача с таким id - "${id}" не найдена`);
-    }
 
     await this.taskRepository.delete(taskToRemove);
 

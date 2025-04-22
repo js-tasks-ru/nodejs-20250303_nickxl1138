@@ -23,7 +23,10 @@ export class TasksController {
   }
 
   @Get()
-  findAll(@Query("page") page?: number, @Query("limit") limit?: number) {
+  findAll(
+    @Query("page", new ParseIntPipe({ optional: true })) page?: number,
+    @Query("limit", new ParseIntPipe({ optional: true })) limit?: number,
+  ) {
     return this.tasksService.findAll(page, limit);
   }
 
