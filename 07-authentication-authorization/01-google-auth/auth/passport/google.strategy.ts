@@ -21,11 +21,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
     let user = await this.usersService.findOne(profile.id);
 
+    const avatarPicture = profile.photos.length ? profile.photos[0].value : "";
+
     if (!user) {
       const payload = {
         id: profile.id,
         displayName: profile.displayName,
-        avatar: profile.photos[0].value,
+        avatar: avatarPicture,
       };
 
       user = await this.usersService.create(payload);
