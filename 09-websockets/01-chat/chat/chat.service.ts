@@ -9,7 +9,12 @@ export class ChatService {
     @InjectRepository(Message) private messageRepository: Repository<Message>,
   ) {}
 
-  find() {}
+  find() {
+    return this.messageRepository.find();
+  }
 
-  async create(body: Partial<Message>) {}
+  async create(body: Partial<Message>) {
+    const message = this.messageRepository.create(body);
+    return await this.messageRepository.save(message);
+  }
 }
